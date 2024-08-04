@@ -47,4 +47,12 @@ echo "version: $version"
 rm -f ./system/app/*.apk || true
 aria2c "$url" -d system/app -j 10 -x 10
 
-sed -i '' "s/^version=.*/version=${version}/" module.prop
+echo '' > module.prop
+# shellcheck disable=SC2129
+echo "id=fdroid_system_app_installer" >> module.prop
+echo "name=Fdroid System App Installer" >> module.prop
+echo "versionCode=${version}" >> module.prop
+echo "author=hc841" >> module.prop
+echo "description=This module installs F-Droid as a system app." >> module.prop
+
+cat module.prop

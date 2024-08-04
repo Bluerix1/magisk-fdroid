@@ -1,4 +1,4 @@
-name: Public
+name: Publish
 
 on:
   push:

@@ -31,28 +31,39 @@ getReleaseUrls() {
   echo "$result" | head -n 1
 }
 
-url=$(getReleaseUrls "f-droid" "fdroidclient" 'org\.fdroid\.fdroid_.+.apk')
-version=$(echo "$url" | grep -oP '(?<=_)\d+(?=.apk)')
-if [ -z "$url" ]; then
-  echo "Error: url is empty"
+echo '' > urls.txt
+fdroid_url="$(curl --silent https://f-droid.org/en/packages/org.fdroid.fdroid/ | grep --only-matching --perl-regexp 'https://f-droid.org/repo/org.fdroid.fdroid_\d+.apk' | sort --reverse | head -n 1)"
+version=$(echo "$fdroid_url" | grep -oP '(?<=_)\d+(?=.apk)')
+if [ -z "$fdroid_url" ]; then
+  echo "Error: fdroid_url is empty"
   exit 1
 fi
 if [ -z "$version" ]; then
   echo "Error: version is empty"
   exit 1
 fi
-echo "url: $url"
+echo "fdroid_url: $fdroid_url"
 echo "version: $version"
+echo "$fdroid_url" >> urls.txt
+
+fdroid_ext_url="$(curl --silent https://f-droid.org/en/packages/org.fdroid.fdroid.privileged/ | grep --only-matching --perl-regexp 'https://f-droid.org/repo/org.fdroid.fdroid.privileged_.+.apk' | sort --reverse | head -n 1)"
+if [ -z "$fdroid_ext_url" ]; then
+  echo "Error: fdroid_ext_url is empty"
+  exit 1
+fi
+echo "fdroid_ext_url: $fdroid_ext_url"
+echo "$fdroid_ext_url" >> urls.txt
 
 rm -f ./system/app/*.apk || true
-aria2c "$url" -d system/app -j 10 -x 10
+aria2c -i urls.txt -d system/app -j 10 -x 10
 
+# Produce metadata
 echo '' > module.prop
 # shellcheck disable=SC2129
 echo "id=fdroid_system_app_installer" >> module.prop
 echo "name=Fdroid System App Installer" >> module.prop
 echo "versionCode=${version}" >> module.prop
-echo "author=hc841" >> module.prop
+echo "author=Frank_Lan" >> module.prop
 echo "description=This module installs F-Droid as a system app." >> module.prop
 
 cat module.prop

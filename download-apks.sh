@@ -13,8 +13,8 @@ fi
 
 getReleaseUrls() {
   local owner repo apiUrl githubAuthArg regex result
-  if [[ -n "$GITHUB_TOKEN" ]]; then
-    githubAuthArg="-u tlan16:$GITHUB_TOKEN"
+  if [[ -n "$GH_TOKEN" ]]; then
+    githubAuthArg="-u tlan16:$GH_TOKEN"
   fi
 
   owner="$1"

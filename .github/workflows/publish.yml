@@ -21,3 +21,10 @@ jobs:
           packages: p7zip-full p7zip-rar aria2c sed bash
       - run: ./download-apks.sh
       - run: ./compress.sh
+      - uses: ncipollo/release-action@v1
+        with:
+          name: latest
+          tag: latest
+          allowUpdates: true
+          artifacts: "magisk-fdroid.zip"
+          bodyFile: module.prop

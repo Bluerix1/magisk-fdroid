@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+file_name="magisk-fdroid.zip"
+
 7z a -mx9 \
-  module.zip \
+  "$file_name" \
   LICENSE \
   META-INF \
   README.md \
@@ -9,4 +11,4 @@
   module.prop \
   system
 
-7z l module.zip
+7z l "$file_name"
